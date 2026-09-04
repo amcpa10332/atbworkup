@@ -1,0 +1,53 @@
+name: Build macOS app
+
+# Builds ATBWorkup.app on TWO real macOS runners in parallel -- one Intel
+# (x86_64), one Apple Silicon (arm64) -- so both chip types get a working
+# build automatically, without needing physical access to both kinds of
+# Mac. PyInstaller doesn't cross-compile, so this is genuinely two separate
+# builds, not one universal2 build; each runner produces the zip that
+# matches its own architecture.
+#
+# Trigger manually from the Actions tab ("Run workflow"), or it runs
+# automatically on every push to main.
+#
+# After a run finishes, download the results from the workflow run's
+# Summary page under "Artifacts" -- one zip per architecture.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: macos-13       # Intel (x86_64) hosted runner
+            arch_label: intel
+          - os: macos-14       # Apple Silicon (arm64) hosted runner
+            arch_label: apple-silicon
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Build
+        run: bash scripts/build_mac.sh
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ATBWorkup-mac-${{ matrix.arch_label }}
+          path: |
+            dist/*.zip
+            dist/How to Install.md
+          if-no-files-found: error
