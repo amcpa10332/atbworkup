@@ -46,25 +46,33 @@ any other Windows program — no need to hunt down files by hand.
    Silicon/M-series, ask the instructor — that build may not be ready yet.
    Not sure which you have? Apple menu → **About This Mac** → check the
    "Chip" line.)
-2. Double-click the `.pkg` file.
-3. macOS will likely refuse it at first: *"...can't be opened because it is
-   from an unidentified developer."* This is normal for any installer that
-   isn't distributed through the App Store or signed with a paid Apple
-   developer account — not a sign of anything wrong. To get past it (only
-   needed once):
-   - **Right-click** (or Control-click) the `.pkg` → **Open** → click
-     **Open** again in the dialog that appears.
-   - If that doesn't offer an "Open" option: go to **System Settings →
-     Privacy & Security**, scroll to the security message about it, and
-     click **Open Anyway**. Then double-click the `.pkg` again.
+
+2. **Before you double-click it**, clear the download flag that makes macOS
+   distrust it — this step is required, not optional, and skipping it is
+   the single most common thing that goes wrong here:
+   - Open **Terminal** (press `Cmd + Space`, type `Terminal`, press Enter)
+   - Type `xattr -cr ` (with a trailing space after it) — **don't press
+     Enter yet**
+   - Drag the downloaded `.pkg` file from your **Downloads** folder into
+     the Terminal window — this fills in its file path for you
+   - Press **Enter**. No output means it worked.
+
+3. Now double-click the `.pkg` file. It should open straight into the
+   installer with no warning. (If you skipped step 2, or it still refuses
+   with a message about being "damaged" or from an "unidentified
+   developer," go back and do step 2 — that fixes it.)
+
 4. The standard macOS installer window opens. Click through
    **Continue → Install → Close**. It may ask for your Mac's own login
    password partway through — that's normal for installing any app into
    Applications, not something specific to this one.
+
 5. Open **ATBWorkup** from Launchpad or your Applications folder.
+
 6. The first time the app opens, it will ask you to set up your **profile**
    (your name and initials). This only happens once — it identifies your
    work in the audit log, so use your real name.
+
 7. You're in. Create a new workup or open an existing `.atbw` file to begin.
 
 ### Uninstalling / reinstalling
