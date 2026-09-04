@@ -51,3 +51,33 @@ jobs:
             dist/*.zip
             dist/How to Install.md
           if-no-files-found: error
+
+      - name: Build .pkg installer
+        # pkgbuild ships with every macOS runner (part of the Xcode Command
+        # Line Tools) -- this produces a standard double-clickable Apple
+        # installer package, same format as Zoom.pkg / MicrosoftTeams.pkg,
+        # so opening it is something students have already done before.
+        # It still needs one right-click -> Open past Gatekeeper the first
+        # time (this is an unsigned package, no paid Apple Developer
+        # account) -- everything after that is normal Installer.app clicks
+        # (Continue / Install / Close), no Terminal at any point.
+        run: |
+          VERSION=$(grep -oE '^APP_VERSION = "[^"]+"' atbworkup/constants.py | sed -E 's/APP_VERSION = "(.*)"/\1/')
+          rm -rf pkgroot
+          mkdir -p pkgroot/Applications
+          cp -R dist/ATBWorkup.app pkgroot/Applications/
+          pkgbuild \
+            --root pkgroot \
+            --identifier tax.zbcpa.atbworkup \
+            --version "$VERSION" \
+            --install-location / \
+            "dist/ATBWorkup-Installer-${{ matrix.arch_label }}.pkg"
+
+      - name: Upload .pkg artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ATBWorkup-installer-${{ matrix.arch_label }}
+          path: |
+            dist/ATBWorkup-Installer-${{ matrix.arch_label }}.pkg
+            dist/How to Install.md
+          if-no-files-found: error
