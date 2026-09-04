@@ -7,26 +7,22 @@ Follow the steps for your operating system below.
 
 ## Windows
 
-1. **Download** `ATBWorkupSetup-v0.1.0.zip` from the class Team (Files tab).
-2. **Extract it first**: right-click the zip → **Extract All...** → Extract.
-   There's only one file inside (the installer) — it's zipped only because
-   Teams won't let `.exe` files be uploaded directly, not because there's
-   anything else to unpack.
-3. Double-click the extracted **ATBWorkupSetup-v0.1.0.exe** to run the installer.
-4. You'll almost certainly see a blue **"Windows protected your PC"** screen.
+1. **Download** `ATBWorkupSetup-v0.1.0.exe` from the link your instructor shared.
+2. Double-click it to run the installer.
+3. You'll almost certainly see a blue **"Windows protected your PC"** screen.
    This is normal — it appears for any app that isn't from a large,
    commercially-signed publisher, not just this one. To continue:
    - Click **More info**
    - Click **Run anyway**
-5. Click through the setup wizard: **Next → Next → Install → Finish**.
+4. Click through the setup wizard: **Next → Next → Install → Finish**.
    (It installs just for your own Windows account, so it won't ask for an
    admin password — this works even on school-managed lab machines.)
-6. It creates a shortcut on your Desktop and in the Start Menu named
+5. It creates a shortcut on your Desktop and in the Start Menu named
    **ATBWorkup**. Use either one to launch it from now on.
-7. The first time the app opens, it will ask you to set up your **profile**
+6. The first time the app opens, it will ask you to set up your **profile**
    (your name and initials). This only happens once — it identifies your
    work in the audit log, so use your real name.
-8. You're in. Create a new workup or open an existing `.atbw` file to begin.
+7. You're in. Create a new workup or open an existing `.atbw` file to begin.
 
 ### If your antivirus quarantines or deletes the installer
 Some antivirus tools flag unsigned apps from unfamiliar publishers, even
@@ -45,36 +41,36 @@ any other Windows program — no need to hunt down files by hand.
 
 ## Mac
 
-1. **Download** `ATBWorkup-v0.1.0-mac.zip` from the class Team (Files tab).
-2. Double-click it to unzip — this produces **ATBWorkup.app**.
-3. Drag **ATBWorkup.app** into your **Applications** folder (open a Finder
-   window, click Applications in the sidebar, drag it in).
-4. Open it from Applications. macOS will refuse the first launch with
-   *"ATBWorkup can't be opened because it is from an unidentified
-   developer"* — this is normal for any app that isn't distributed through
-   the App Store or signed with a paid Apple developer account, not a sign
-   of anything wrong. To get past it (only needed once):
-   - **Right-click** (or Control-click) **ATBWorkup.app** → **Open** →
-     click **Open** again in the dialog that appears.
+1. **Download** `ATBWorkup-Installer-apple-silicon.pkg` from the link your
+   instructor shared. (If you're on an older Intel Mac rather than Apple
+   Silicon/M-series, ask the instructor — that build may not be ready yet.
+   Not sure which you have? Apple menu → **About This Mac** → check the
+   "Chip" line.)
+2. Double-click the `.pkg` file.
+3. macOS will likely refuse it at first: *"...can't be opened because it is
+   from an unidentified developer."* This is normal for any installer that
+   isn't distributed through the App Store or signed with a paid Apple
+   developer account — not a sign of anything wrong. To get past it (only
+   needed once):
+   - **Right-click** (or Control-click) the `.pkg` → **Open** → click
+     **Open** again in the dialog that appears.
    - If that doesn't offer an "Open" option: go to **System Settings →
-     Privacy & Security**, scroll down to the security message about
-     ATBWorkup, and click **Open Anyway**. Then open the app again.
-5. The first time the app opens, it will ask you to set up your **profile**
+     Privacy & Security**, scroll to the security message about it, and
+     click **Open Anyway**. Then double-click the `.pkg` again.
+4. The standard macOS installer window opens. Click through
+   **Continue → Install → Close**. It may ask for your Mac's own login
+   password partway through — that's normal for installing any app into
+   Applications, not something specific to this one.
+5. Open **ATBWorkup** from Launchpad or your Applications folder.
+6. The first time the app opens, it will ask you to set up your **profile**
    (your name and initials). This only happens once — it identifies your
    work in the audit log, so use your real name.
-6. You're in. Create a new workup or open an existing `.atbw` file to begin.
-
-### Apple Silicon vs. Intel
-This build was made on one specific Mac and matches its chip type (Apple
-Silicon/M-series, or Intel — whichever the instructor's test machine
-used). If the app won't open at all and you don't see the "unidentified
-developer" message described above, it may be built for the other chip
-type — contact the instructor rather than troubleshooting this yourself.
+7. You're in. Create a new workup or open an existing `.atbw` file to begin.
 
 ### Uninstalling / reinstalling
-Drag **ATBWorkup.app** from Applications to the Trash, same as any other
-Mac app. Your workup files (`.atbw`) are untouched — they're separate
-files, not stored inside the app.
+Drag **ATBWorkup** from Applications to the Trash, same as any other Mac
+app. Your workup files (`.atbw`) are untouched — they're separate files,
+not stored inside the app.
 
 ---
 
