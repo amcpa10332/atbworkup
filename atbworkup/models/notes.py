@@ -71,6 +71,14 @@ def get_notes(conn, job_id: str, status_filter: str = "Open") -> list[dict]:
     return [dict(r) for r in rows]
 
 
+def update_note(conn, note_id: str, *, body: str) -> None:
+    """Edit an existing note's text. Does not touch status/type/linkage."""
+    conn.execute(
+        "UPDATE notes SET body = ? WHERE note_id = ?",
+        (body, note_id),
+    )
+
+
 def clear_note(conn, note_id: str, cleared_by: str) -> None:
     now = _now()
     conn.execute(

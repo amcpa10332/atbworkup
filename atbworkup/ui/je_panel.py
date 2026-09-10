@@ -726,8 +726,16 @@ class JEPanel(QWidget):
                 memo=ln.get("memo") or "",
             )
         self._add_blank_line()
-        self._update_balance()
+        # _set_editor_enabled unconditionally disables Save as part of
+        # enabling the rest of the editor -- it must run BEFORE
+        # _update_balance(), which is the thing that's actually supposed
+        # to decide whether Save is enabled. In the old order, Save was
+        # left disabled every time an entry loaded, no matter how it was
+        # balanced -- and since changing the Type combo alone never
+        # triggers _update_balance(), a type-only change had no way to
+        # ever re-enable Save, so it silently couldn't be persisted.
         self._set_editor_enabled(True)
+        self._update_balance()
         self._delete_btn.setEnabled(True)
         self._update_signoff_btn(entry)
 
@@ -906,8 +914,11 @@ class JEPanel(QWidget):
         if prefill_account_id:
             self._append_line_row(account_id=prefill_account_id)
         self._add_blank_line()
-        self._update_balance()
+        # Same ordering fix as _load_entry -- _set_editor_enabled must run
+        # before _update_balance(), not after, or it clobbers the Save
+        # state _update_balance() just computed.
         self._set_editor_enabled(True)
+        self._update_balance()
         self._delete_btn.setEnabled(False)
         self._signoff_btn.setEnabled(False)
         self._list.clearSelection()
@@ -933,7 +944,8 @@ class JEPanel(QWidget):
 
         with db_connection(self._path) as conn:
             if self._current_aje_id:
-                update_entry(conn, self._current_aje_id, description=description)
+                update_entry(conn, self._current_aje_id, description=description,
+                            entry_type=entry_type)
                 save_lines(conn, self._current_aje_id, lines)
                 event = "changed_aje"
             else:
@@ -1050,5 +1062,39 @@ def _table_style() -> str:
             letter-spacing: 1px;
             padding: 4px 6px;
             border: 1px solid #0f1d33;
+        }
+        /* Setting a stylesheet on this table blocks the app-wide QSS from
+           cascading to its cell widgets (Qt gives the nearest ancestor
+           stylesheet priority) -- the account combo, DR/CR amount fields,
+           and memo field all silently fell back to an unstyled native
+           render where the text color happened to be invisible against
+           the background. Re-declare the same rules explicitly, scoped to
+           this table, so cell widgets render exactly like inputs anywhere
+           else in the app. */
+        QTableWidget QLineEdit {
+            font-family: "Segoe UI";
+            font-size: 12px;
+            background: #FFFFFF;
+            color: #000000;
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+        QTableWidget QLineEdit:focus { border: 1px solid #1A2B4C; }
+        QTableWidget QComboBox {
+            font-family: "Segoe UI";
+            font-size: 12px;
+            background: #FFFFFF;
+            color: #000000;
+            border: 1px solid #cccccc;
+            border-radius: 3px;
+            padding: 2px 4px;
+        }
+        QTableWidget QComboBox:focus { border: 1px solid #1A2B4C; }
+        QTableWidget QComboBox QAbstractItemView {
+            background: #FFFFFF;
+            color: #000000;
+            selection-background-color: #1A2B4C;
+            selection-color: #FFFFFF;
         }
     """

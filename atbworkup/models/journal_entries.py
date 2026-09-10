@@ -83,10 +83,41 @@ def remove_signoff(conn, aje_id: str) -> None:
     )
 
 
-def update_entry(conn, aje_id: str, *, description: str) -> None:
+def update_entry(conn, aje_id: str, *, description: str,
+                 entry_type: str | None = None) -> None:
+    """
+    Update an existing entry's description, and optionally reclassify its
+    type (AJE/RJE/FTJE). Changing the type also regenerates entry_number
+    to match (e.g. AJE-002 -> RJE-004) -- leaving the old number in place
+    would show a mismatched prefix against the new Type column, which
+    reads as a bug in its own right on a workpaper meant to be traced.
+    """
+    if entry_type is None:
+        conn.execute(
+            "UPDATE journal_entries SET description = ? WHERE aje_id = ?",
+            (description, aje_id),
+        )
+        return
+
+    row = conn.execute(
+        "SELECT job_id, entry_type FROM journal_entries WHERE aje_id = ?",
+        (aje_id,),
+    ).fetchone()
+    if row is None:
+        return
+    if row["entry_type"] == entry_type:
+        conn.execute(
+            "UPDATE journal_entries SET description = ? WHERE aje_id = ?",
+            (description, aje_id),
+        )
+        return
+
+    new_number = next_entry_number(conn, row["job_id"], entry_type)
     conn.execute(
-        "UPDATE journal_entries SET description = ? WHERE aje_id = ?",
-        (description, aje_id),
+        """UPDATE journal_entries
+           SET description = ?, entry_type = ?, entry_number = ?
+           WHERE aje_id = ?""",
+        (description, entry_type, new_number, aje_id),
     )
 
 

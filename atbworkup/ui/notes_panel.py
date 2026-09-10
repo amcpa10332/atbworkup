@@ -15,7 +15,7 @@ from pathlib import Path
 
 from PySide6.QtWidgets import (
     QDockWidget, QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-    QPushButton, QScrollArea, QFrame,
+    QPushButton, QScrollArea, QFrame, QMenu,
     QButtonGroup, QDialog, QComboBox, QTextEdit, QDialogButtonBox,
 )
 from PySide6.QtCore import Qt, Signal
@@ -23,6 +23,7 @@ from PySide6.QtCore import Qt, Signal
 from atbworkup.db.connection import db_connection
 from atbworkup.models.notes import (
     get_notes, clear_note, resolve_note, open_note_count, create_note,
+    update_note,
 )
 from atbworkup.constants import NOTE_TYPE_COLORS
 
@@ -166,6 +167,7 @@ class NotesDock(QDockWidget):
                 card.clear_requested.connect(self._on_clear)
                 card.resolve_requested.connect(self._on_resolve)
                 card.navigate_requested.connect(self.navigate_to)
+                card.edit_requested.connect(self._on_edit_note)
                 self._cards_layout.insertWidget(
                     self._cards_layout.count() - 1, card
                 )
@@ -189,6 +191,18 @@ class NotesDock(QDockWidget):
     def _on_resolve(self, note_id: str):
         with db_connection(self._path) as conn:
             resolve_note(conn, note_id, self._performed_by)
+        self.reload()
+        self.notes_changed.emit()
+
+    def _on_edit_note(self, note_id: str, current_body: str):
+        dlg = _EditNoteDialog(current_body, parent=self)
+        if dlg.exec() != _EditNoteDialog.Accepted:
+            return
+        new_body = dlg.note_text()
+        if new_body == current_body:
+            return
+        with db_connection(self._path) as conn:
+            update_note(conn, note_id, body=new_body)
         self.reload()
         self.notes_changed.emit()
 
@@ -217,10 +231,15 @@ class _NoteCard(QFrame):
     clear_requested   = Signal(str)
     resolve_requested = Signal(str)
     navigate_requested = Signal(str, str)
+    edit_requested     = Signal(str, str)   # note_id, current body
 
     def __init__(self, note: dict, performed_by: str, role: str = "preparer",
                  parent=None):
         super().__init__(parent)
+        self._note_id = note["note_id"]
+        self._body    = note["body"]
+        self.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.customContextMenuRequested.connect(self._show_context_menu)
         ntype    = note.get("note_type", "preparer")
         is_open  = note["status"] == "Open"
         is_closed = not is_open
@@ -329,6 +348,13 @@ class _NoteCard(QFrame):
 
         layout.addLayout(btn_row)
 
+    def _show_context_menu(self, pos):
+        menu = QMenu(self)
+        edit_action = menu.addAction("Edit Note…")
+        chosen = menu.exec(self.mapToGlobal(pos))
+        if chosen is edit_action:
+            self.edit_requested.emit(self._note_id, self._body)
+
 
 def _action_button_for(note_type: str, role: str) -> tuple[str, str, str] | None:
     """Return (label, signal_name, color) or None if this role has no action."""
@@ -347,6 +373,38 @@ def _action_button_for(note_type: str, role: str) -> tuple[str, str, str] | None
             return ("Done", "resolve", _C_DELIVERY)
         return None
     return None
+
+
+# ── Edit note dialog ──────────────────────────────────────────────────────────
+
+class _EditNoteDialog(QDialog):
+    """Edit an existing note's text. Type/status/linkage are unchanged --
+    this only ever touches the body, same as update_note()."""
+
+    def __init__(self, body: str, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("Edit Note")
+        self.setMinimumWidth(380)
+
+        layout = QVBoxLayout(self)
+        layout.setSpacing(8)
+
+        self._body_edit = QTextEdit()
+        self._body_edit.setPlainText(body)
+        self._body_edit.setMinimumHeight(100)
+        layout.addWidget(self._body_edit)
+
+        buttons = QDialogButtonBox(
+            QDialogButtonBox.Save | QDialogButtonBox.Cancel
+        )
+        buttons.accepted.connect(self.accept)
+        buttons.rejected.connect(self.reject)
+        layout.addWidget(buttons)
+
+        self._body_edit.setFocus()
+
+    def note_text(self) -> str:
+        return self._body_edit.toPlainText().strip()
 
 
 # ── Panel note dialog ─────────────────────────────────────────────────────────
