@@ -11,6 +11,14 @@ on:
     tags:
       - 'v*'
 
+# This repo's default Actions token permissions are read-only (Settings ->
+# Actions -> General -> Workflow permissions), which made the publish job's
+# "Create GitHub Release" step fail with "Resource not accessible by
+# integration" on the first real run of this workflow. Grant write access
+# explicitly here instead of changing the repo-wide default.
+permissions:
+  contents: write
+
 jobs:
   build-windows:
     runs-on: windows-latest
