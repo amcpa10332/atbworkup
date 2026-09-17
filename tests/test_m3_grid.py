@@ -2,9 +2,9 @@
 import pytest
 from pathlib import Path
 
-from atbworkup.db.connection import db_connection
-from atbworkup.models.accounts import get_account_balances, get_grouped_balances, set_flag
-from atbworkup.models.job import get_job
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.accounts import get_account_balances, get_grouped_balances, set_flag
+from blueprinttb.models.job import get_job
 
 
 FIXTURES = Path(__file__).parent / "fixtures"

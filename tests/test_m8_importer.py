@@ -8,13 +8,13 @@ from pathlib import Path
 import openpyxl
 import pytest
 
-from atbworkup.db.connection import db_connection
-from atbworkup.db.settings import ensure_settings_db, set_settings_path
-from atbworkup.exporter.review_package import save_workup, export_review_package
-from atbworkup.importer.package import open_from_package
-from atbworkup.models.job import create_workup, get_job
-from atbworkup.models.mappings import map_accounts, upsert_tax_line
-from atbworkup.utils.naming import suggested_filename, temp_atbw_path
+from blueprinttb.db.connection import db_connection
+from blueprinttb.db.settings import ensure_settings_db, set_settings_path
+from blueprinttb.exporter.review_package import save_workup, export_review_package
+from blueprinttb.importer.package import open_from_package
+from blueprinttb.models.job import create_workup, get_job
+from blueprinttb.models.mappings import map_accounts, upsert_tax_line
+from blueprinttb.utils.naming import suggested_filename, temp_working_path
 
 
 # ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ def _full_binder(tmp_path, settings_db):
         "accounting_system": None,
     }
     job_id = uuid.uuid4().hex
-    atbw_path = tmp_path / "work.atbw"
+    atbw_path = tmp_path / "work.btaw"
     create_workup(atbw_path, meta, job_id=job_id)
     job = get_job(atbw_path)
 
@@ -118,14 +118,14 @@ def _full_binder(tmp_path, settings_db):
 
 def test_suggested_filename_extension():
     name = suggested_filename(2025, "ABC Co")
-    assert name.endswith(".atbr.xlsx")
+    assert name.endswith(".bta.xlsx")
 
 
 def test_temp_atbw_path_uses_job_id():
     job_id = uuid.uuid4().hex
-    p = temp_atbw_path(job_id)
-    assert p.name == f"{job_id}.atbw"
-    assert "ATBWorkup" in str(p)
+    p = temp_working_path(job_id)
+    assert p.name == f"{job_id}.btaw"
+    assert "BlueprintTB" in str(p)
 
 
 # ---------------------------------------------------------------------------
@@ -133,7 +133,7 @@ def test_temp_atbw_path_uses_job_id():
 # ---------------------------------------------------------------------------
 
 def test_save_workup_creates_file(tmp_path, meta):
-    atbw = tmp_path / "work.atbw"
+    atbw = tmp_path / "work.btaw"
     create_workup(atbw, meta)
     job = get_job(atbw)
     out = tmp_path / "output.atbr.xlsx"
@@ -145,7 +145,7 @@ def test_save_workup_creates_file(tmp_path, meta):
 
 
 def test_save_workup_has_required_tabs(tmp_path, meta):
-    atbw = tmp_path / "work.atbw"
+    atbw = tmp_path / "work.btaw"
     create_workup(atbw, meta)
     job = get_job(atbw)
     out = tmp_path / "output.atbr.xlsx"
@@ -161,7 +161,7 @@ def test_save_workup_has_required_tabs(tmp_path, meta):
 
 
 def test_save_workup_does_not_write_packages_row(tmp_path, meta):
-    atbw = tmp_path / "work.atbw"
+    atbw = tmp_path / "work.btaw"
     create_workup(atbw, meta)
     job = get_job(atbw)
     out = tmp_path / "output.atbr.xlsx"
@@ -174,7 +174,7 @@ def test_save_workup_does_not_write_packages_row(tmp_path, meta):
 
 
 def test_save_workup_version_stays_at_1_for_new_binder(tmp_path, meta):
-    atbw = tmp_path / "work.atbw"
+    atbw = tmp_path / "work.btaw"
     create_workup(atbw, meta)
     job = get_job(atbw)
     out = tmp_path / "output.atbr.xlsx"
@@ -257,6 +257,54 @@ def test_open_from_package_returns_job(tmp_path):
     assert reimported_job["job_id"] == job["job_id"]
 
     temp_path.unlink(missing_ok=True)
+
+
+def test_open_from_package_accepts_legacy_atbr_extension(tmp_path):
+    """This app was formerly named ATBWorkup and used .atbr.xlsx; a package
+    saved with that legacy extension must still open correctly today --
+    open_from_package validates file CONTENT (the __manifest/__data sheets),
+    never the filename, so this is really a guard against a future change
+    accidentally making the extension load-bearing."""
+    settings_db = tmp_path / "settings.db"
+    atbw_path, job = _full_binder(tmp_path, settings_db)
+    legacy_out = tmp_path / "Legacy Client 2023 Prep in Progress V01.atbr.xlsx"
+
+    with db_connection(atbw_path) as conn:
+        save_workup(conn, job=job, output_path=legacy_out, performed_by="Tester")
+
+    temp_path, reimported_job = open_from_package(legacy_out, performed_by="Reviewer")
+    assert reimported_job["client_name"] == "Round Trip Co"
+    assert reimported_job["job_id"] == job["job_id"]
+    temp_path.unlink(missing_ok=True)
+
+
+def test_suggested_filename_uses_new_extension():
+    """New saves suggest .bta.xlsx (the rebrand from ATBWorkup), not the
+    legacy .atbr.xlsx -- see PACKAGE_EXTENSIONS for what's still accepted
+    on open."""
+    name = suggested_filename(2025, "ABC Co")
+    assert name.endswith(".bta.xlsx")
+    assert ".atbr" not in name
+
+
+def test_has_package_extension_accepts_both():
+    from blueprinttb.utils.naming import has_package_extension
+    assert has_package_extension("Client 2025.bta.xlsx")
+    assert has_package_extension("Client 2025.atbr.xlsx")
+    assert has_package_extension("CLIENT 2025.BTA.XLSX")  # case-insensitive
+    assert not has_package_extension("Client 2025.xlsx")
+    assert not has_package_extension("Client 2025.docx")
+
+
+def test_with_package_extension_normalizes():
+    from blueprinttb.utils.naming import with_package_extension
+    assert with_package_extension("Client 2025") == "Client 2025.bta.xlsx"
+    assert with_package_extension("Client 2025.xlsx") == "Client 2025.bta.xlsx"
+    # Already has a recognized extension (old or new) -- leave it alone,
+    # since forcing .bta.xlsx here would mangle a deliberate .atbr.xlsx
+    # Save As of an existing legacy file into another legacy-named copy.
+    assert with_package_extension("Client 2025.bta.xlsx") == "Client 2025.bta.xlsx"
+    assert with_package_extension("Client 2025.atbr.xlsx") == "Client 2025.atbr.xlsx"
 
 
 def test_open_from_package_hydrates_accounts(tmp_path):
@@ -366,7 +414,7 @@ def test_open_from_package_rejects_missing_manifest(tmp_path):
 
 def test_create_workup_preserves_job_id(tmp_path, meta):
     custom_id = uuid.uuid4().hex
-    atbw = tmp_path / "work.atbw"
+    atbw = tmp_path / "work.btaw"
     returned_id = create_workup(atbw, meta, job_id=custom_id)
     assert returned_id == custom_id
     job = get_job(atbw)

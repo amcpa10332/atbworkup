@@ -3,13 +3,13 @@ import pytest
 import uuid
 import datetime
 
-from atbworkup.db.connection import db_connection
-from atbworkup.models.journal_entries import (
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.journal_entries import (
     create_entry, get_entry, get_entries, get_lines,
     save_lines, delete_entry, entry_balance, next_entry_number, update_entry,
 )
-from atbworkup.models.accounts import get_account_balances
-from atbworkup.models.job import get_job
+from blueprinttb.models.accounts import get_account_balances
+from blueprinttb.models.job import get_job
 
 
 # ---------------------------------------------------------------------------

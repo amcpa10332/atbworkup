@@ -2,7 +2,7 @@
 One-off: turn Blueprint Trial Balance Icon.png (flat white background, the
 badge itself is an opaque rounded square) into a transparent-background PNG
 and multi-resolution Windows (.ico) and macOS (.icns) icons, saved into
-atbworkup/assets/.
+blueprinttb/assets/.
 
 Approach: flood-fill connectivity from the image border, not a global color
 threshold -- the white "B"/"T"/"BLUEPRINT" lettering INSIDE the navy badge
@@ -20,7 +20,7 @@ from PIL import Image
 from scipy.ndimage import binary_dilation, gaussian_filter, label
 
 SRC = Path("Blueprint Trial Balance Icon.png")
-OUT_DIR = Path("atbworkup/assets")
+OUT_DIR = Path("blueprinttb/assets")
 OUT_PNG = OUT_DIR / "app_icon.png"
 OUT_ICO = OUT_DIR / "app_icon.ico"
 OUT_ICNS = OUT_DIR / "app_icon.icns"

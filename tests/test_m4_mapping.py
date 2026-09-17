@@ -3,13 +3,13 @@ import pytest
 import uuid
 import datetime
 
-from atbworkup.db.connection import db_connection
-from atbworkup.db.settings import settings_connection, ensure_settings_db, set_settings_path
-from atbworkup.models.accounts import get_grouped_balances
-from atbworkup.models.mappings import (
+from blueprinttb.db.connection import db_connection
+from blueprinttb.db.settings import settings_connection, ensure_settings_db, set_settings_path
+from blueprinttb.models.accounts import get_grouped_balances
+from blueprinttb.models.mappings import (
     get_tax_line_templates, upsert_tax_line, map_accounts, get_mapping,
 )
-from atbworkup.models.job import get_job
+from blueprinttb.models.job import get_job
 
 
 # ---------------------------------------------------------------------------

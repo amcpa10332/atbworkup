@@ -128,7 +128,7 @@ notes panel in a second window.
 
 ## M7 — Validation and Export Review Package
 
-**Goal:** App validates the workup and exports a `V01` `.atbr.xlsx` review package.
+**Goal:** App validates the workup and exports a `V01` `.bta.xlsx` review package.
 
 **Deliverables:**
 - "Ready for Review" button in toolbar
@@ -140,7 +140,7 @@ notes panel in a second window.
   - No Unknown/placeholder group assignments
   - Required sections ready
 - Diagnostics panel shows failures with links to problem records
-- On all-pass: generates `.atbr.xlsx` with visible tabs + hidden `__` tabs
+- On all-pass: generates `.bta.xlsx` with visible tabs + hidden `__` tabs
 - All `__` tabs are `xlSheetVeryHidden`
 - Activity log written to `__activity_log` tab
 - `__manifest` tab with checksum
@@ -148,14 +148,14 @@ notes panel in a second window.
 - Status → `Ready for Review`
 - File saved to workpaper folder with auto-generated name
 
-**Done when:** Export produces a valid `.atbr.xlsx`; hidden tabs present and veryHidden;
+**Done when:** Export produces a valid `.bta.xlsx`; hidden tabs present and veryHidden;
 checksum verifiable by re-reading the file.
 
 ---
 
 ## M8 — Import Review Package (Re-import)
 
-**Goal:** App can re-import a `.atbr.xlsx` and validate its lineage and integrity.
+**Goal:** App can re-import a `.bta.xlsx` and validate its lineage and integrity.
 
 **Deliverables:**
 - "Import Review Package" on start screen and File menu

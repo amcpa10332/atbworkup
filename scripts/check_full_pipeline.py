@@ -9,13 +9,13 @@ import uuid
 from pathlib import Path
 
 # Bootstrap settings DB
-from atbworkup.db.settings import ensure_settings_db, set_settings_path
-from atbworkup.db.connection import db_connection
-from atbworkup.models.job import create_workup, get_job
-from atbworkup.models.mappings import upsert_tax_line, map_accounts
-from atbworkup.exporter.review_package import save_workup
-from atbworkup.importer.package import open_from_package
-from atbworkup.utils.naming import temp_atbw_path
+from blueprinttb.db.settings import ensure_settings_db, set_settings_path
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.job import create_workup, get_job
+from blueprinttb.models.mappings import upsert_tax_line, map_accounts
+from blueprinttb.exporter.review_package import save_workup
+from blueprinttb.importer.package import open_from_package
+from blueprinttb.utils.naming import temp_working_path
 import datetime, openpyxl, json
 
 tmp = Path(tempfile.mkdtemp())
@@ -34,7 +34,7 @@ meta = {
     "accounting_system": "QuickBooks",
 }
 job_id = uuid.uuid4().hex
-atbw = tmp / "work.atbw"
+atbw = tmp / "work.btaw"
 create_workup(atbw, meta, job_id=job_id)
 job = get_job(atbw)
 

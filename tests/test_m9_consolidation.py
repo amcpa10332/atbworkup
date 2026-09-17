@@ -24,13 +24,13 @@ import zipfile
 
 import openpyxl
 
-from atbworkup.db.connection import db_connection
-from atbworkup.models.job import create_workup, get_job
-from atbworkup.models.accounts import create_account
-from atbworkup.models.mappings import upsert_tax_line, map_accounts
-from atbworkup.models import consolidation_calc
-from atbworkup.exporter.review_package import save_workup, _atomic_save
-from atbworkup.data.tax_line_categories import CATEGORY_SCHEDULE_K
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.job import create_workup, get_job
+from blueprinttb.models.accounts import create_account
+from blueprinttb.models.mappings import upsert_tax_line, map_accounts
+from blueprinttb.models import consolidation_calc
+from blueprinttb.exporter.review_package import save_workup, _atomic_save
+from blueprinttb.data.tax_line_categories import CATEGORY_SCHEDULE_K
 
 
 def _now():
@@ -39,7 +39,7 @@ def _now():
 
 def _make_subsidiary(tmp_path, name, accounts, entity_type="1120S"):
     """
-    Build a subsidiary .atbw, map the given accounts, export it to a
+    Build a subsidiary .btaw, map the given accounts, export it to a
     .atbr.xlsx, and return that path.
 
     accounts: list of (number, account_name, account_type, normal_balance,
@@ -47,7 +47,7 @@ def _make_subsidiary(tmp_path, name, accounts, entity_type="1120S"):
                         line_name, category_or_None)
     """
     job_id = uuid.uuid4().hex
-    atbw_path = tmp_path / f"{name}.atbw"
+    atbw_path = tmp_path / f"{name}.btaw"
     meta = {
         "client_name": name, "entity_name": name, "tax_year": 2025,
         "entity_type": entity_type, "prepared_by": "Test Preparer",
@@ -78,7 +78,7 @@ def _make_subsidiary(tmp_path, name, accounts, entity_type="1120S"):
 def _make_consolidated_job(tmp_path, members):
     """members: list of (label, code, atbr_xlsx_path). Returns (conn ctx path, job)."""
     job_id = uuid.uuid4().hex
-    atbw_path = tmp_path / "consolidated.atbw"
+    atbw_path = tmp_path / "consolidated.btaw"
     meta = {
         "client_name": "Test Group (Consolidated)", "entity_name": "Test Group (Consolidated)",
         "tax_year": 2025, "entity_type": "Consolidated", "prepared_by": "Test Preparer",
@@ -118,7 +118,7 @@ def test_net_income_is_not_blind_sum_of_sections(tmp_path):
 
 def test_category_auto_classification(tmp_path):
     job_id = uuid.uuid4().hex
-    atbw_path = tmp_path / "probe.atbw"
+    atbw_path = tmp_path / "probe.btaw"
     meta = {
         "client_name": "Probe", "entity_name": "Probe", "tax_year": 2025,
         "entity_type": "1120S", "prepared_by": "Test", "workpaper_folder": str(tmp_path),
@@ -166,8 +166,8 @@ def test_account_level_elimination_debit_to_expense_reduces_net_income(tmp_path)
     """A $1,000 DEBIT elimination against an EXPENSE account must SUBTRACT
     1,000 from net income, not add it — this was the exact sign bug found
     and fixed this session."""
-    from atbworkup.models import consolidation_entries as ce_model
-    from atbworkup.models import consolidation_read
+    from blueprinttb.models import consolidation_entries as ce_model
+    from blueprinttb.models import consolidation_read
 
     sub = _make_subsidiary(tmp_path, "ExpSub", [
         ("6100", "Consulting Expense", "Expense", "Debit", 500.0,
@@ -206,7 +206,7 @@ def test_account_level_elimination_debit_to_expense_reduces_net_income(tmp_path)
 
 def test_k1_allocation_query_matches_real_schedule_k_lines(tmp_path):
     job_id = uuid.uuid4().hex
-    atbw_path = tmp_path / "k1.atbw"
+    atbw_path = tmp_path / "k1.btaw"
     meta = {
         "client_name": "K1 Co", "entity_name": "K1 Co", "tax_year": 2025,
         "entity_type": "1120S", "prepared_by": "Test", "workpaper_folder": str(tmp_path),
@@ -289,7 +289,7 @@ def test_consolidated_job_gets_combined_tabs_not_empty_regular_tabs(tmp_path):
 def test_regular_job_still_gets_regular_tabs(tmp_path):
     """Non-consolidated jobs must be completely unaffected."""
     job_id = uuid.uuid4().hex
-    atbw_path = tmp_path / "regular.atbw"
+    atbw_path = tmp_path / "regular.btaw"
     meta = {
         "client_name": "Regular Co", "entity_name": "Regular Co", "tax_year": 2025,
         "entity_type": "1120S", "prepared_by": "Test", "workpaper_folder": str(tmp_path),

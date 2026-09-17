@@ -8,14 +8,14 @@ from pathlib import Path
 
 import openpyxl
 
-from atbworkup.db.connection import db_connection
-from atbworkup.models.job import get_job
-from atbworkup.models.validation import run_all, all_pass
-from atbworkup.exporter.review_package import (
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.job import get_job
+from blueprinttb.models.validation import run_all, all_pass
+from blueprinttb.exporter.review_package import (
     export_review_package, suggested_filename, next_version,
 )
-from atbworkup.db.settings import set_settings_path, ensure_settings_db
-from atbworkup.models.mappings import get_tax_line_templates, upsert_tax_line, map_accounts
+from blueprinttb.db.settings import set_settings_path, ensure_settings_db
+from blueprinttb.models.mappings import get_tax_line_templates, upsert_tax_line, map_accounts
 
 
 # ---------------------------------------------------------------------------
@@ -296,5 +296,5 @@ def test_export_updates_job_status(tmp_path, atbw_path):
 
 def test_suggested_filename():
     job = {"tax_year": 2024, "client_name": "Acme Corp"}
-    assert suggested_filename(job, 1) == "2024 Acme Corp Prep in Progress V01.atbr.xlsx"
-    assert suggested_filename(job, 3) == "2024 Acme Corp Prep in Progress V03.atbr.xlsx"
+    assert suggested_filename(job, 1) == "2024 Acme Corp Prep in Progress V01.bta.xlsx"
+    assert suggested_filename(job, 3) == "2024 Acme Corp Prep in Progress V03.bta.xlsx"

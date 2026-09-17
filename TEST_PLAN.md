@@ -278,7 +278,7 @@ tests/
 - Assert file exists at expected path with auto-generated name.
 
 ### `test_hidden_tabs_present`
-- Open exported `.atbr.xlsx` with openpyxl.
+- Open exported `.bta.xlsx` with openpyxl.
 - Assert all `__` sheets exist.
 
 ### `test_hidden_tabs_very_hidden`
@@ -312,7 +312,7 @@ tests/
 ### `test_file_name_format`
 - Export package.
 - Assert file name matches pattern:
-  `YYYY Client Name TB Workup - V01 - Ready for Review - YYYYMMDD-HHMM.atbr.xlsx`.
+  `YYYY Client Name TB Workup - V01 - Ready for Review - YYYYMMDD-HHMM.bta.xlsx`.
 
 ---
 

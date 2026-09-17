@@ -1,0 +1,127 @@
+name: Release
+
+# Builds Windows + both Mac architectures and publishes them as a GitHub
+# Release. Triggered by pushing a version tag (e.g. `git tag v2.0.0 && git
+# push origin v2.0.0`) -- NOT on every push to main, so a release is always
+# a deliberate, versioned action rather than something that happens by
+# accident on a routine commit.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Build app
+        run: powershell -ExecutionPolicy Bypass -File scripts\build_windows.ps1
+
+      - name: Install Inno Setup
+        run: choco install innosetup -y
+
+      - name: Build installer
+        run: |
+          $version = (Select-String -Path blueprinttb\constants.py -Pattern '^APP_VERSION\s*=\s*"([^"]+)"').Matches[0].Groups[1].Value
+          $env:BTA_VERSION = $version
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" installer\blueprinttb.iss
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: |
+            dist\*.zip
+            installer\Output\*.exe
+            How to Install.md
+          if-no-files-found: error
+
+  build-mac:
+    strategy:
+      matrix:
+        include:
+          - os: macos-13       # Intel (x86_64) hosted runner
+            arch_label: intel
+          - os: macos-14       # Apple Silicon (arm64) hosted runner
+            arch_label: apple-silicon
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Build
+        run: bash scripts/build_mac.sh
+
+      - name: Build .pkg installer
+        run: |
+          VERSION=$(grep -oE '^APP_VERSION = "[^"]+"' blueprinttb/constants.py | sed -E 's/APP_VERSION = "(.*)"/\1/')
+          rm -rf pkgroot pkgscripts
+          mkdir -p pkgroot/Applications pkgscripts
+          cp -R dist/BlueprintTB.app pkgroot/Applications/
+          cat > pkgscripts/preinstall << 'SCRIPT'
+          #!/bin/bash
+          # The product was previously named ATBWorkup, installed as its own
+          # .app bundle -- remove it so upgrading is a clean one-step swap
+          # instead of leaving a stale ATBWorkup.app behind.
+          rm -rf "/Applications/ATBWorkup.app"
+          exit 0
+          SCRIPT
+          chmod +x pkgscripts/preinstall
+          pkgbuild \
+            --root pkgroot \
+            --scripts pkgscripts \
+            --identifier tax.zbcpa.blueprinttb \
+            --version "$VERSION" \
+            --install-location / \
+            "dist/BlueprintTB-Installer-${{ matrix.arch_label }}.pkg"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mac-installer-${{ matrix.arch_label }}
+          path: |
+            dist/BlueprintTB-Installer-${{ matrix.arch_label }}.pkg
+          if-no-files-found: error
+
+  publish:
+    needs: [build-windows, build-mac]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Flatten artifacts for the release
+        run: |
+          mkdir -p release
+          find artifacts -type f \( -name '*.exe' -o -name '*.zip' -o -name '*.pkg' \) -exec cp {} release/ \;
+          cp "How to Install.md" release/
+          ls -la release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release/*
+          generate_release_notes: true

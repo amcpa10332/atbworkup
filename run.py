@@ -1,2 +1,2 @@
-from atbworkup.main import main
+from blueprinttb.main import main
 main()

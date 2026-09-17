@@ -1,4 +1,4 @@
-# How to Install — ATBWorkup (Trial Balance Workup Tool)
+# How to Install — Blueprint Trial Balance (Trial Balance Workup Tool)
 
 This is the desktop app you'll use for the trial balance workup assignments.
 Follow the steps for your operating system below.
@@ -7,7 +7,7 @@ Follow the steps for your operating system below.
 
 ## Windows
 
-1. **Download** `ATBWorkupSetup-v0.1.0.exe` from the link your instructor shared.
+1. **Download** `BlueprintTBSetup-v2.0.0.exe` from the link your instructor shared.
 2. Double-click it to run the installer.
 3. You'll almost certainly see a blue **"Windows protected your PC"** screen.
    This is normal — it appears for any app that isn't from a large,
@@ -18,7 +18,7 @@ Follow the steps for your operating system below.
    (It installs just for your own Windows account, so it won't ask for an
    admin password — this works even on school-managed lab machines.)
 5. It creates a shortcut on your Desktop and in the Start Menu named
-   **ATBWorkup**. Use either one to launch it from now on.
+   **Blueprint Trial Balance**. Use either one to launch it from now on.
 6. The first time the app opens, it will ask you to set up your **profile**
    (your name and initials). This only happens once — it identifies your
    work in the audit log, so use your real name.
@@ -34,14 +34,14 @@ this, contact the instructor rather than trying to disable your antivirus
 entirely.
 
 ### Uninstalling / reinstalling
-Use **Settings → Apps → Installed apps → ATBWorkup → Uninstall**, same as
+Use **Settings → Apps → Installed apps → Blueprint Trial Balance → Uninstall**, same as
 any other Windows program — no need to hunt down files by hand.
 
 ---
 
 ## Mac
 
-1. **Download** `ATBWorkup-Installer-apple-silicon.pkg` from the link your
+1. **Download** `BlueprintTB-Installer-apple-silicon.pkg` from the link your
    instructor shared. (If you're on an older Intel Mac rather than Apple
    Silicon/M-series, ask the instructor — that build may not be ready yet.
    Not sure which you have? Apple menu → **About This Mac** → check the
@@ -67,7 +67,7 @@ any other Windows program — no need to hunt down files by hand.
    password partway through — that's normal for installing any app into
    Applications, not something specific to this one.
 
-5. Open **ATBWorkup** from Launchpad or your Applications folder.
+5. Open **Blueprint Trial Balance** from Launchpad or your Applications folder.
 
 6. The first time the app opens, it will ask you to set up your **profile**
    (your name and initials). This only happens once — it identifies your
@@ -76,7 +76,7 @@ any other Windows program — no need to hunt down files by hand.
 7. You're in. Create a new workup or open an existing `.atbw` file to begin.
 
 ### Uninstalling / reinstalling
-Drag **ATBWorkup** from Applications to the Trash, same as any other Mac
+Drag **Blueprint Trial Balance** from Applications to the Trash, same as any other Mac
 app. Your workup files (`.atbw`) are untouched — they're separate files,
 not stored inside the app.
 
@@ -88,8 +88,8 @@ Each workup is a single `.atbw` file — keep it wherever you'd keep any other
 class file (Desktop, a synced folder, a flash drive). The app also keeps a
 small settings file (your profile, custom templates) at:
 
-- Windows: `%APPDATA%\ATBWorkup\`
-- Mac: `~/Library/Application Support/ATBWorkup/`
+- Windows: `%APPDATA%\BlueprintTB\`
+- Mac: `~/Library/Application Support/BlueprintTB/`
 
 You don't need to touch this yourself; it's mentioned here only so you know
 it exists if something looks like it "forgot" your profile after moving to
@@ -97,7 +97,7 @@ a different computer.
 
 ## Submitting your work
 
-Turn in the exported **`.atbr.xlsx`** review package (via the app's export/
+Turn in the exported **`.bta.xlsx`** review package (via the app's export/
 submit workflow), not the raw `.atbw` file, unless the assignment says
 otherwise. The exported file carries an internal audit trail of your work —
 don't edit it by hand after exporting, or after unhiding any worksheet tabs.

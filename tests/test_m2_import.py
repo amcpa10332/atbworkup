@@ -3,13 +3,13 @@ from pathlib import Path
 
 import pytest
 
-from atbworkup.importer.tb_parser import (
+from blueprinttb.importer.tb_parser import (
     get_sheet_names, read_raw_rows, detect_header_row,
     parse_accounts, _try_parse_amount,
 )
-from atbworkup.importer.tb_writer import write_accounts
-from atbworkup.db.connection import db_connection
-from atbworkup.models.job import get_activity_log, get_job
+from blueprinttb.importer.tb_writer import write_accounts
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.job import get_activity_log, get_job
 
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -168,7 +168,7 @@ def test_messy_headers_correct_account_count():
 # ---------------------------------------------------------------------------
 
 def test_accounts_written_unmapped(atbw_path):
-    from atbworkup.models.job import get_job
+    from blueprinttb.models.job import get_job
     rows = read_raw_rows(FIXTURES / "sample_tb_single_col.xlsx", "TB")
     result = parse_accounts(rows, header_row=0, name_col=1, number_col=0, balance_col=2)
     job = get_job(atbw_path)

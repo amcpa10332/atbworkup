@@ -3,9 +3,9 @@ import pytest
 import uuid
 import datetime
 
-from atbworkup.db.connection import db_connection
-from atbworkup.models.notes import create_note, get_notes, clear_note, open_note_count
-from atbworkup.models.job import get_job
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.notes import create_note, get_notes, clear_note, open_note_count
+from blueprinttb.models.job import get_job
 
 
 def _insert_account(conn, job_id, *, name="Cash"):

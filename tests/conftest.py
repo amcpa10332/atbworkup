@@ -22,8 +22,8 @@ def meta(tmp_path):
 
 @pytest.fixture
 def atbw_path(tmp_path, meta):
-    from atbworkup.models.job import create_workup
-    from atbworkup.utils.naming import suggested_filename
+    from blueprinttb.models.job import create_workup
+    from blueprinttb.utils.naming import suggested_filename
     path = tmp_path / suggested_filename(meta["tax_year"], meta["client_name"])
     create_workup(path, meta)
     return path

@@ -21,7 +21,7 @@ What it checks:
      for its content (a rough heuristic, not proof by itself).
 
 This only detects tampering with the *exported .xlsx*. It cannot detect a
-student handing their finished .atbw file to someone else who then exports
+student handing their finished .btaw file to someone else who then exports
 it themselves — the exported_by/performed_by fields reflect the settings
 profile that did the export, so cross-check that name against your roster.
 """

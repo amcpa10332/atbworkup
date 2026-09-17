@@ -7,7 +7,7 @@ entries specified in:
 
 This does NOT drive the GUI -- it calls the same functions the GUI calls
 (create_workup, create_account, create_entry, save_lines, map_accounts,
-export_review_package), producing a real .atbw file and .atbr.xlsx package
+export_review_package), producing a real .btaw file and .atbr.xlsx package
 identical to what a human preparer would get by hand-entering everything.
 
 Run from the project root:
@@ -18,17 +18,17 @@ from __future__ import annotations
 import datetime
 from pathlib import Path
 
-from atbworkup.db.connection import db_connection
-from atbworkup.db.settings import set_settings_path, ensure_settings_db, save_profile
-from atbworkup.models.job import create_workup, get_job
-from atbworkup.models.accounts import create_account, get_account_balances
-from atbworkup.models.mappings import get_tax_line_templates, upsert_tax_line, map_accounts
-from atbworkup.models.journal_entries import create_entry, save_lines, get_entries
-from atbworkup.exporter.review_package import export_review_package
+from blueprinttb.db.connection import db_connection
+from blueprinttb.db.settings import set_settings_path, ensure_settings_db, save_profile
+from blueprinttb.models.job import create_workup, get_job
+from blueprinttb.models.accounts import create_account, get_account_balances
+from blueprinttb.models.mappings import get_tax_line_templates, upsert_tax_line, map_accounts
+from blueprinttb.models.journal_entries import create_entry, save_lines, get_entries
+from blueprinttb.exporter.review_package import export_review_package
 
 OUT_DIR = Path("Instructor Answer Keys/BUSI 500 Project 1")
 OUT_DIR.mkdir(parents=True, exist_ok=True)
-ATBW_PATH = OUT_DIR / "2025 Cedar & Slate Creative Instructor Answer Key.atbw"
+ATBW_PATH = OUT_DIR / "2025 Cedar & Slate Creative Instructor Answer Key.btaw"
 SETTINGS_PATH = OUT_DIR / "_settings.db"
 PREPARER = "Instructor Answer Key"
 
@@ -78,7 +78,7 @@ ACCOUNTS = [
     ("5400", "Miscellaneous Expense",              "Expense",   "Debit",    7500.0),
 ]
 
-# account_number -> Schedule C tax line_code (from atbworkup/data/tax_line_seeds.py),
+# account_number -> Schedule C tax line_code (from blueprinttb/data/tax_line_seeds.py),
 # following the instructor's own "Preliminary Mapping" column in the Unadjusted TB tab.
 ACCOUNT_LINE_CODE = {
     "1000": "BS-1", "1010": "BS-1", "1100": "BS-2", "1200": "BS-5",

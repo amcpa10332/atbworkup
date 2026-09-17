@@ -1,14 +1,14 @@
-"""M1 tests: .atbw creation, schema, metadata, activity log, naming."""
+"""M1 tests: .btaw creation, schema, metadata, activity log, naming."""
 import sqlite3
 from pathlib import Path
 
 import pytest
 
-from atbworkup.constants import APP_VERSION, SCHEMA_VERSION
-from atbworkup.db.connection import db_connection
-from atbworkup.db.schema import EXPECTED_TABLES
-from atbworkup.models.job import create_workup, open_workup, get_job, get_activity_log
-from atbworkup.utils.naming import suggested_filename
+from blueprinttb.constants import APP_VERSION, SCHEMA_VERSION
+from blueprinttb.db.connection import db_connection
+from blueprinttb.db.schema import EXPECTED_TABLES
+from blueprinttb.models.job import create_workup, open_workup, get_job, get_activity_log
+from blueprinttb.utils.naming import suggested_filename
 
 
 # ---------------------------------------------------------------------------
@@ -16,13 +16,13 @@ from atbworkup.utils.naming import suggested_filename
 # ---------------------------------------------------------------------------
 
 def test_create_atbw_file_exists(tmp_path, meta):
-    path = tmp_path / "test.atbw"
+    path = tmp_path / "test.btaw"
     create_workup(path, meta)
     assert path.exists()
 
 
 def test_atbw_is_sqlite(tmp_path, meta):
-    path = tmp_path / "test.atbw"
+    path = tmp_path / "test.btaw"
     create_workup(path, meta)
     header = path.read_bytes()[:16]
     assert header == b"SQLite format 3\x00"
@@ -118,7 +118,7 @@ def test_activity_log_open_does_not_duplicate_create(atbw_path):
 
 def test_suggested_filename():
     name = suggested_filename(2025, "ABC Company")
-    assert name == "2025 ABC Company Prep in Progress V01.atbr.xlsx"
+    assert name == "2025 ABC Company Prep in Progress V01.bta.xlsx"
 
 
 def test_suggested_filename_strips_whitespace():
@@ -156,11 +156,11 @@ def test_foreign_keys_enforced(atbw_path):
 
 def test_open_missing_file_raises(tmp_path):
     with pytest.raises(FileNotFoundError):
-        open_workup(tmp_path / "no_such_file.atbw", performed_by="x")
+        open_workup(tmp_path / "no_such_file.btaw", performed_by="x")
 
 
 def test_open_invalid_sqlite_raises(tmp_path):
-    bad = tmp_path / "bad.atbw"
+    bad = tmp_path / "bad.btaw"
     bad.write_bytes(b"this is not sqlite")
     with pytest.raises(Exception):
         open_workup(bad, performed_by="x")

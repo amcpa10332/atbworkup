@@ -5,7 +5,7 @@
 | File | Location | Contents |
 |------|----------|----------|
 | `YYYY Client Name TB Workup.atbw` | User's workpaper folder | All binder data (tables below) |
-| `atbw_settings.db` | OS app-data folder (`%APPDATA%\ATBWorkup\`) | User profile, admin settings, tax line templates, contacts |
+| `atbw_settings.db` | OS app-data folder (`%APPDATA%\BlueprintTB\`) | User profile, admin settings, tax line templates, contacts |
 
 Tables below marked **[binder]** live in the `.atbw` file.
 Tables marked **[settings]** live in `atbw_settings.db`.
@@ -318,7 +318,7 @@ These are calculated at query time, never persisted:
 ## App Settings Database (separate from `.atbw`)
 
 A separate SQLite file — `atbw_settings.db` — lives in the user's app data folder
-(`%APPDATA%\ATBWorkup\`). It is not a binder file. It stores:
+(`%APPDATA%\BlueprintTB\`). It is not a binder file. It stores:
 
 **`user_profile` table** (one row)
 

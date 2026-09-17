@@ -6,12 +6,12 @@ import sys, hashlib, uuid, tempfile, json
 sys.path.insert(0, '.')
 from pathlib import Path
 
-from atbworkup.db.settings import ensure_settings_db, set_settings_path
-from atbworkup.db.connection import db_connection
-from atbworkup.models.job import create_workup, get_job
-from atbworkup.exporter.review_package import save_workup
-from atbworkup.importer.package import open_from_package
-from atbworkup.utils.naming import temp_atbw_path, suggested_filename
+from blueprinttb.db.settings import ensure_settings_db, set_settings_path
+from blueprinttb.db.connection import db_connection
+from blueprinttb.models.job import create_workup, get_job
+from blueprinttb.exporter.review_package import save_workup
+from blueprinttb.importer.package import open_from_package
+from blueprinttb.utils.naming import temp_working_path, suggested_filename
 
 import openpyxl
 
@@ -32,7 +32,7 @@ meta = {
 
 # --- Simulate _on_new ---
 job_id    = uuid.uuid4().hex
-temp_path = temp_atbw_path(job_id)
+temp_path = temp_working_path(job_id)
 xlsx_path = tmp / suggested_filename(meta["tax_year"], meta["client_name"])
 
 print(f"1. create_workup -> {temp_path.name}")

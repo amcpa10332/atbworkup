@@ -1,6 +1,6 @@
 name: Build macOS app
 
-# Builds ATBWorkup.app on TWO real macOS runners in parallel -- one Intel
+# Builds BlueprintTB.app on TWO real macOS runners in parallel -- one Intel
 # (x86_64), one Apple Silicon (arm64) -- so both chip types get a working
 # build automatically, without needing physical access to both kinds of
 # Mac. PyInstaller doesn't cross-compile, so this is genuinely two separate
@@ -46,7 +46,7 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ATBWorkup-mac-${{ matrix.arch_label }}
+          name: BlueprintTB-mac-${{ matrix.arch_label }}
           path: |
             dist/*.zip
             dist/How to Install.md
@@ -62,22 +62,32 @@ jobs:
         # account) -- everything after that is normal Installer.app clicks
         # (Continue / Install / Close), no Terminal at any point.
         run: |
-          VERSION=$(grep -oE '^APP_VERSION = "[^"]+"' atbworkup/constants.py | sed -E 's/APP_VERSION = "(.*)"/\1/')
-          rm -rf pkgroot
-          mkdir -p pkgroot/Applications
-          cp -R dist/ATBWorkup.app pkgroot/Applications/
+          VERSION=$(grep -oE '^APP_VERSION = "[^"]+"' blueprinttb/constants.py | sed -E 's/APP_VERSION = "(.*)"/\1/')
+          rm -rf pkgroot pkgscripts
+          mkdir -p pkgroot/Applications pkgscripts
+          cp -R dist/BlueprintTB.app pkgroot/Applications/
+          cat > pkgscripts/preinstall << 'SCRIPT'
+          #!/bin/bash
+          # The product was previously named ATBWorkup, installed as its own
+          # .app bundle -- remove it so upgrading is a clean one-step swap
+          # instead of leaving a stale ATBWorkup.app behind.
+          rm -rf "/Applications/ATBWorkup.app"
+          exit 0
+          SCRIPT
+          chmod +x pkgscripts/preinstall
           pkgbuild \
             --root pkgroot \
-            --identifier tax.zbcpa.atbworkup \
+            --scripts pkgscripts \
+            --identifier tax.zbcpa.blueprinttb \
             --version "$VERSION" \
             --install-location / \
-            "dist/ATBWorkup-Installer-${{ matrix.arch_label }}.pkg"
+            "dist/BlueprintTB-Installer-${{ matrix.arch_label }}.pkg"
 
       - name: Upload .pkg artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ATBWorkup-installer-${{ matrix.arch_label }}
+          name: BlueprintTB-installer-${{ matrix.arch_label }}
           path: |
-            dist/ATBWorkup-Installer-${{ matrix.arch_label }}.pkg
+            dist/BlueprintTB-Installer-${{ matrix.arch_label }}.pkg
             dist/How to Install.md
           if-no-files-found: error

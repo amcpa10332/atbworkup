@@ -39,19 +39,19 @@ Draft
 In Prep
   │  (preparer clicks "Ready for Review"; validation passes)
   ▼
-Ready for Review  ──► V01 .atbr.xlsx exported
+Ready for Review  ──► V01 .bta.xlsx exported
   │  (reviewer opens V01)
   ▼
 [Reviewer working...]
   │  (reviewer exports response)
   ▼
-Reviewer Notes  ──► V02 .atbr.xlsx exported
+Reviewer Notes  ──► V02 .bta.xlsx exported
   │  (preparer imports V02)
   ▼
 [Preparer clearing notes...]
   │  (preparer exports cleared package)
   ▼
-Cleared for Review  ──► V03 .atbr.xlsx exported
+Cleared for Review  ──► V03 .bta.xlsx exported
   │  (reviewer reviews clearances)
   ▼
   ├── More notes? → Reviewer Notes (V04...) → repeat
@@ -116,13 +116,13 @@ All changes are live; computed columns (ADJ, FINAL, FTAX) update in real time.
 1. Click "Ready for Review."
 2. Optional: preparer checklist popup (interactive checkbox list).
 3. App runs validation checks (see PROJECT_SPEC §10). Any failure shows diagnostics panel.
-4. All checks pass → app generates `V01` `.atbr.xlsx` in the workpaper folder.
+4. All checks pass → app generates `V01` `.bta.xlsx` in the workpaper folder.
 5. App updates `packages` table and `activity_log`.
 6. Status → `Ready for Review`.
 
 ### Step 7 — Reviewer: Open Review Package
 
-1. Open app → "Import Review Package" → select `.atbr.xlsx`.
+1. Open app → "Import Review Package" → select `.bta.xlsx`.
 2. App validates manifest, job_id, version lineage, and checksum.
 3. If valid: reviewer interface loads. All preparer data is visible.
 4. Reviewer-specific UI elements are enabled: purple R flag, "Resolve Note," delivery notes.
@@ -143,7 +143,7 @@ All reviewer-originated changes are tagged `originated_by = reviewer`.
 ### Step 9 — Reviewer: Export Response Package
 
 1. Reviewer clicks "Export Reviewer Response."
-2. App generates `V02` `.atbr.xlsx`.
+2. App generates `V02` `.bta.xlsx`.
 3. All reviewer changes and notes are written to hidden tabs.
 4. Activity log: `exported_package`.
 5. Status → `Reviewer Notes`.
@@ -218,7 +218,7 @@ All reviewer-originated changes are tagged `originated_by = reviewer`.
 
 ## Package Lineage Validation
 
-Before importing any `.atbr.xlsx`, the app verifies:
+Before importing any `.bta.xlsx`, the app verifies:
 
 ```
 incoming.version_number == max(packages.version_number) + 1

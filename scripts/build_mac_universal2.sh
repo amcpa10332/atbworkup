@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build a UNIVERSAL2 macOS package for ATBWorkup -- one .app that runs on
+# Build a UNIVERSAL2 macOS package for BlueprintTB -- one .app that runs on
 # both Apple Silicon and Intel Macs, so it can be shared across machines
 # with different chips instead of each person building their own.
 #
@@ -19,8 +19,8 @@
 #   pip install -r requirements-dev.txt
 #
 # Produces:
-#   dist/ATBWorkup.app                              the built app bundle
-#   dist/ATBWorkup-v<version>-mac-universal2.zip     zipped app, ready to upload
+#   dist/BlueprintTB.app                              the built app bundle
+#   dist/BlueprintTB-v<version>-mac-universal2.zip     zipped app, ready to upload
 #   dist/How to Install.md                           copy of the student instructions
 
 set -euo pipefail
@@ -28,24 +28,24 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-VERSION=$(grep -oE '^APP_VERSION = "[^"]+"' atbworkup/constants.py | sed -E 's/APP_VERSION = "(.*)"/\1/')
+VERSION=$(grep -oE '^APP_VERSION = "[^"]+"' blueprinttb/constants.py | sed -E 's/APP_VERSION = "(.*)"/\1/')
 if [ -z "$VERSION" ]; then
-  echo "Could not find APP_VERSION in atbworkup/constants.py" >&2
+  echo "Could not find APP_VERSION in blueprinttb/constants.py" >&2
   exit 1
 fi
-echo "Building ATBWorkup v$VERSION for macOS (universal2)..."
+echo "Building BlueprintTB v$VERSION for macOS (universal2)..."
 
 rm -rf build dist
 
-python3 -m PyInstaller atbworkup-mac-universal2.spec --noconfirm
+python3 -m PyInstaller blueprinttb-mac-universal2.spec --noconfirm
 
-if [ ! -d "dist/ATBWorkup.app" ]; then
-  echo "Build did not produce dist/ATBWorkup.app -- see PyInstaller output above." >&2
+if [ ! -d "dist/BlueprintTB.app" ]; then
+  echo "Build did not produce dist/BlueprintTB.app -- see PyInstaller output above." >&2
   echo "Fall back to: bash scripts/build_mac.sh" >&2
   exit 1
 fi
 
-BIN="dist/ATBWorkup.app/Contents/MacOS/ATBWorkup"
+BIN="dist/BlueprintTB.app/Contents/MacOS/BlueprintTB"
 echo ""
 echo "Checking architectures actually in the built binary..."
 lipo -info "$BIN" || true
@@ -60,8 +60,8 @@ if ! lipo -info "$BIN" 2>/dev/null | grep -q "x86_64" || ! lipo -info "$BIN" 2>/
   echo "  bash scripts/build_mac.sh"
 fi
 
-ZIP_NAME="dist/ATBWorkup-v$VERSION-mac-universal2.zip"
-ditto -c -k --sequesterRsrc --keepParent "dist/ATBWorkup.app" "$ZIP_NAME"
+ZIP_NAME="dist/BlueprintTB-v$VERSION-mac-universal2.zip"
+ditto -c -k --sequesterRsrc --keepParent "dist/BlueprintTB.app" "$ZIP_NAME"
 cp "How to Install.md" "dist/How to Install.md"
 
 echo ""
@@ -69,7 +69,7 @@ echo "Build complete. Upload these two files to Teams / Drive:"
 echo "  $ZIP_NAME"
 echo "  dist/How to Install.md"
 echo ""
-echo "Before uploading: launch dist/ATBWorkup.app yourself first to confirm"
+echo "Before uploading: launch dist/BlueprintTB.app yourself first to confirm"
 echo "it actually opens on this machine (right-click -> Open, since it's"
 echo "unsigned), AND ideally have someone with the OTHER chip type test it"
 echo "too -- that's the entire point of a universal2 build, and it hasn't"

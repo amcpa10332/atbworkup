@@ -57,7 +57,7 @@ Map accounts → tax lines / workpaper sections
 Preparer workup (AJEs, RJEs, FTJEs, notes, flags)
       │
       ▼
-Validate → Export Review Package (.atbr.xlsx V01)
+Validate → Export Review Package (.bta.xlsx V01)
       │
       ▼
 Reviewer opens package → edits, adds notes, exports response (V02)
@@ -170,9 +170,9 @@ The app controls file names. Users do not manually name review packages.
 
 ```
 YYYY Client Name TB Workup.atbw                                    ← native file
-YYYY Client Name TB Workup - V01 - Ready for Review - 20260215-1435.atbr.xlsx
-YYYY Client Name TB Workup - V02 - Reviewer Notes - 20260215-1610.atbr.xlsx
-YYYY Client Name TB Workup - V03 - Cleared for Review - 20260216-0900.atbr.xlsx
+YYYY Client Name TB Workup - V01 - Ready for Review - 20260215-1435.bta.xlsx
+YYYY Client Name TB Workup - V02 - Reviewer Notes - 20260215-1610.bta.xlsx
+YYYY Client Name TB Workup - V03 - Cleared for Review - 20260216-0900.bta.xlsx
 YYYY Client Name TB Workup - FINAL.xlsx
 YYYY Client Name TB Workup - FINAL.pdf
 ```

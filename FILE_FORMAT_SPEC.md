@@ -21,15 +21,15 @@ validates this on open before displaying any data.
 
 ---
 
-## 2. Review Exchange Package (`.atbr.xlsx`)
+## 2. Review Exchange Package (`.bta.xlsx`)
 
 **What it is:** An Excel workbook that is both human-readable and machine-readable.
 
 **Naming (app-controlled, no manual override):**
 ```
-YYYY Client Name TB Workup - V01 - Ready for Review - YYYYMMDD-HHMM.atbr.xlsx
-YYYY Client Name TB Workup - V02 - Reviewer Notes - YYYYMMDD-HHMM.atbr.xlsx
-YYYY Client Name TB Workup - V03 - Cleared for Review - YYYYMMDD-HHMM.atbr.xlsx
+YYYY Client Name TB Workup - V01 - Ready for Review - YYYYMMDD-HHMM.bta.xlsx
+YYYY Client Name TB Workup - V02 - Reviewer Notes - YYYYMMDD-HHMM.bta.xlsx
+YYYY Client Name TB Workup - V03 - Cleared for Review - YYYYMMDD-HHMM.bta.xlsx
 ```
 
 ### 2a. Visible (Human-Readable) Tabs
@@ -93,7 +93,7 @@ One data row. Validates the file before any other tab is read.
 
 ### 2d. Import Validation Rules
 
-When the app opens a `.atbr.xlsx` file, it:
+When the app opens a `.bta.xlsx` file, it:
 
 1. Reads `__manifest`. If missing or malformed → reject with error.
 2. Validates `manifest_version` is supported by this app version.
@@ -193,7 +193,7 @@ If the source uses a single signed column, the wizard maps the sign directly.
 
 ## 6. File Integrity
 
-- Every `.atbr.xlsx` export has a SHA-256 checksum in `__manifest`.
+- Every `.bta.xlsx` export has a SHA-256 checksum in `__manifest`.
 - Checksum covers the serialized content of all `__` tabs (not visible tabs).
 - On import, checksum is recomputed and compared. Mismatch → reject with error.
 - `.atbw` files are not checksummed but the SQLite journal provides write-ahead logging.
