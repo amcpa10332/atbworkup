@@ -52,8 +52,13 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-13       # Intel (x86_64) hosted runner
-            arch_label: intel
+          # Intel (macos-13) is deliberately dropped here: GitHub has not
+          # been allocating that runner image for this repo for at least a
+          # week (every prior run sat "queued" for the full 24h timeout and
+          # was auto-cancelled, while macos-14 always completes in ~1
+          # minute) -- keeping it in the matrix means the release never
+          # publishes. Re-add it once GitHub-hosted Intel runners are
+          # confirmed working again for this account.
           - os: macos-14       # Apple Silicon (arm64) hosted runner
             arch_label: apple-silicon
     runs-on: ${{ matrix.os }}

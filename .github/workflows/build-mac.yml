@@ -1,17 +1,19 @@
 name: Build macOS app
 
-# Builds BlueprintTB.app on TWO real macOS runners in parallel -- one Intel
-# (x86_64), one Apple Silicon (arm64) -- so both chip types get a working
-# build automatically, without needing physical access to both kinds of
-# Mac. PyInstaller doesn't cross-compile, so this is genuinely two separate
-# builds, not one universal2 build; each runner produces the zip that
-# matches its own architecture.
+# Builds BlueprintTB.app on a macOS runner. Originally ran an Intel
+# (macos-13) leg alongside Apple Silicon (macos-14) so both chip types got
+# a working build automatically -- but GitHub has not been allocating the
+# macos-13 runner image for this repo (every run sat "queued" for the full
+# 24h timeout and was auto-cancelled), so it's dropped for now. Re-add it
+# once GitHub-hosted Intel runners are confirmed working again for this
+# account. PyInstaller doesn't cross-compile, so a restored Intel leg would
+# again be a genuinely separate build, not a universal2 one.
 #
 # Trigger manually from the Actions tab ("Run workflow"), or it runs
 # automatically on every push to main.
 #
 # After a run finishes, download the results from the workflow run's
-# Summary page under "Artifacts" -- one zip per architecture.
+# Summary page under "Artifacts".
 
 on:
   push:
@@ -23,8 +25,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - os: macos-13       # Intel (x86_64) hosted runner
-            arch_label: intel
           - os: macos-14       # Apple Silicon (arm64) hosted runner
             arch_label: apple-silicon
     runs-on: ${{ matrix.os }}
